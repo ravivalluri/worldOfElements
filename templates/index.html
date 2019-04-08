@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block content %}
+{% if not minerals and search_term %}
+<div class="minerals__empty">
+    <h2>No elements found</h2>
+    <p>No matches for '{{ search_term }}'. Please try a different search term.</p>
+</div>
+{% else %}
+{% if search_term %}
+<div>
+    <p>Showing results for <span class="search-term">'{{ search_term }}'</span> in all mineral fields</p>
+</div>
+{% elif searched_group %}
+<div>
+    <p>Showing results for the <span class="search-term">'{{ searched_group }}'</span> group</p>
+</div>
+{% elif searched_category %}
+<div>
+    <p>Showing results for the <span class="search-term">'{{ searched_category }}'</span> category</p>
+</div>
+{% elif searched_letter %}
+<div>
+    <p>Showing results for element names beginning with '{{ searched_letter|upper }}'</p>
+</div>
+{% endif %}
+<ul class="minerals__container">
+    {% for mineral in minerals %}
+    <li class="minerals__item">
+        <a class="minerals__anchor" href="{% url 'mineral_detail' mineral.pk %}">{{ mineral.first_name }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% if minerals %}
+<div class="pagination">
+    <div class="current">
+        Page {{ minerals.number }} of {{ minerals.paginator.num_pages }}
+    </div>
+    <div class="step-links">
+        {% if minerals.has_previous %}
+        <a href="{{ request.get_full_path }}&page=1">&laquo;</a>
+        <a href="{{ request.get_full_path }}&page={{ minerals.previous_page_number }}">&lsaquo;</a>
+        {% endif %}
+        {% if minerals.has_next %}
+        <a href="{{ request.get_full_path }}&page={{ minerals.next_page_number }}">&rsaquo;</a>
+        <a href="{{ request.get_full_path }}&page={{ minerals.paginator.num_pages }}">&raquo;</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

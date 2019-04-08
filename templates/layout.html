@@ -1,0 +1,77 @@
+{% load custom_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>World of Elements: A complete catalog of elements</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Work+Sans:400,500' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Cousine' rel='stylesheet' type='text/css'>
+    {% load static from staticfiles %}
+    {% block static %}
+    <link href="{% static 'css/global.css' %}" rel='stylesheet' type='text/css'>
+    <link href="{% static 'css/custom.css' %}" rel='stylesheet' type='text/css'>
+    <link href="{% static 'images/favicon.ico' %}" rel='icon' type='image/png'>
+</head>
+
+<body>
+    <div class="bounds">
+        <div class="grid-100">
+            <a href="{% url 'index' %}">
+                <img class='elements_img' src='/static/images/elements.png' />
+                <h1 class="logo__name text-centered">World of Elements</h1>
+            </a>
+            <p class="logo__text text-centered">They're not rocks!</p>
+        </div>
+        <div class="grid-75">
+            {% block content %}
+            {% endblock content %}
+        </div>
+        <div class="grid-25 sidebar">
+            <div class="search-form">
+                <h2>Search</h2>
+                <form type="get" action="{% url_filter_replace request 'search-box' search_term %}">
+                    <input id="search-box" type="text" name="search-box" placeholder="Search...">
+                    <button id="search-submit" class="minerals__anchor" type="submit">Submit</button>
+                </form>
+            </div>
+            <div class="groups">
+                <h2>Group Filter</h2>
+                <ul>
+                    {% for group in mineral_groups %}
+                    <li class="group__item">
+                        <a class="group__link {% if group.name == searched_group %}bolded{% endif %}"
+                            href="{% url_filter_replace request 'group' group.name %}">{{ group.name|title }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="categories">
+                <h2>Category Filter</h2>
+                <select onChange="window.location.href=this.value">
+                    {% for category in mineral_categories %}
+                    <option value="{% url_filter_replace request 'cat' category.name %}"
+                        {% if category.name == searched_category %}selected{% endif %}>{{ category.name|title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="minerals__random">
+        <a class="minerals__anchor" href="{% url 'mineral_detail' rand_mineral %}">Show random element</a>
+        <div class="minerals__letters">
+            {% for letter in letters %}
+            <strong><a class="minerals__letter {% if letter == searched_letter %}bolded{% endif %}"
+                    href="{% url 'index' %}?letter={{ letter }}">{{ letter }}</a></strong>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+{% endblock static %}
+
+</html>
